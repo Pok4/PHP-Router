@@ -74,9 +74,15 @@ class Route
     private $config;
 
     /**
+     * @var array
+     */
+    private $action;
+
+    /**
      * @param       $resource
      * @param array $config
      */
+    
     public function __construct($resource, array $config)
     {
         $this->url        = $resource;
