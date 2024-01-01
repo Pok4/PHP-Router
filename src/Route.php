@@ -75,6 +75,11 @@ class Route
     private $config;
 
     /**
+     * @var array
+     */
+    private $action;
+    
+    /**
      * @param       $resource
      * @param array $config
      */
