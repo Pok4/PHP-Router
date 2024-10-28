@@ -15,82 +15,41 @@
  * This software consists of voluntary contributions made by many individuals
  * and is licensed under the MIT license.
  */
+<?php
 namespace PHPRouter;
 
 use Fig\Http\Message\RequestMethodInterface;
 
 class Route
 {
-    /**
-     * URL of this Route
-     * @var string
-     */
     private $url;
-
-    /**
-     * Accepted HTTP methods for this route.
-     * @var string[]
-     */
     private $methods = array(
         RequestMethodInterface::METHOD_GET,
         RequestMethodInterface::METHOD_POST,
         RequestMethodInterface::METHOD_PUT,
         RequestMethodInterface::METHOD_DELETE,
     );
-
-    /**
-     * Target for this route, can be anything.
-     * @var mixed
-     */
     private $target;
-
-    /**
-     * The name of this route, used for reversed routing
-     * @var string
-     */
     private $name;
-
-    /**
-     * Custom parameter filters for this route
-     * @var array
-     */
     private $filters = array();
-
-    /**
-     * Array containing parameters passed through request URL
-     * @var array
-     */
     private $parameters = array();
-
-    /**
-     * Set named parameters to target method
-     * @example [ [0] => [ ["link_id"] => "12312" ] ]
-     * @var bool
-     */
     private $parametersByName;
-
-    /**
-     * @var array
-     */
     private $config;
-
-    /**
-     * @var array
-     */
     private $action;
-    
-    /**
-     * @param       $resource
-     * @param array $config
-     */
+    private $addonRegex = '';
+
     public function __construct($resource, array $config)
     {
-        $this->url     = $resource;
-        $this->config  = $config;
+        $this->url = $resource;
+        $this->config = $config;
         $this->methods = isset($config['methods']) ? (array) $config['methods'] : array();
-        $this->target  = isset($config['target']) ? $config['target'] : null;
-        $this->name    = isset($config['name']) ? $config['name'] : null;
+        $this->target = isset($config['target']) ? $config['target'] : null;
+        $this->name = isset($config['name']) ? $config['name'] : null;
         $this->parameters = isset($config['parameters']) ? $config['parameters'] : array();
+
+        if (isset($this->parameters['addon_regex'])) {
+            $this->addonRegex = $this->parameters['addon_regex'];
+        }
     }
 
     public function getUrl()
@@ -100,13 +59,10 @@ class Route
 
     public function setUrl($url)
     {
-        $url = (string)$url;
-
-        // make sure that the URL is suffixed with a forward slash
+        $url = (string) $url;
         if (substr($url, -1) !== '/') {
             $url .= '/';
         }
-
         $this->url = $url;
     }
 
@@ -137,18 +93,18 @@ class Route
 
     public function setName($name)
     {
-        $this->name = (string)$name;
+        $this->name = (string) $name;
     }
 
     public function setFilters(array $filters, $parametersByName = false)
     {
-        $this->filters          = $filters;
+        $this->filters = $filters;
         $this->parametersByName = $parametersByName;
     }
 
     public function getRegex()
     {
-        return preg_replace_callback('/(:\w+)/', array(&$this, 'substituteFilter'), $this->url);
+        return preg_replace_callback('/(:\w+)/', array(&$this, 'substituteFilter'), $this->url) . $this->addonRegex;
     }
 
     private function substituteFilter($matches)
@@ -168,12 +124,15 @@ class Route
     public function setParameters(array $parameters)
     {
         $this->parameters = array_merge($this->parameters, $parameters);
+
+        if (isset($this->parameters['addon_regex'])) {
+            $this->addonRegex = $this->parameters['addon_regex'];
+        }
     }
 
     public function dispatch()
     {
         $action = explode('::', $this->config['_controller']);
-
         if ($this->parametersByName) {
             $this->parameters = array($this->parameters);
         }
