@@ -1,36 +1,15 @@
 {
-  "name": "dannyvankooten/php-router",
-  "description": "Simple PHP Router, supports REST and reverse routing.",
-  "keywords": [
-    "router",
-    "routing",
-    "rest"
-  ],
-  "homepage": "https://github.com/dannyvankooten/PHP-Router",
-  "license": "MIT",
-  "authors": [
-    {
-      "name": "Danny van Kooten",
-      "email": "dannyvankooten@gmail.com",
-      "homepage": "http://dannyvankooten.com/"
+    "name": "pok4/php-router",
+    "description": "A simple PHP router for educational purposes.",
+    "type": "library",
+    "require": {
+        "php": ">=7.4"
     },
-    {
-      "name": "Jefersson Nathan",
-      "email": "malukenho@phpse.net"
-    }
-  ],
-  "require": {
-    "php": "^5.3.0|^7.0",
-    "fig/http-message-util": "^1.1"
-  },
-  "require-dev": {
-    "malukenho/docheader": "^0.1.5",
-    "phpunit/phpunit": "4.8.*",
-    "squizlabs/php_codesniffer": "2.*"
-  },
-  "autoload": {
-    "psr-4": {
-      "PHPRouter\\": "src/"
-    }
-  }
+    "autoload": {
+        "psr-4": {
+            "PHPRouter\\": "src/"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
